@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mis Facturas')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alertas}"></div>
+
+<div class="main-content">
+<div class="container">
+    <h2 class="mb-4"><i class="bi bi-receipt"></i> Mis Facturas</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header"><i class="bi bi-funnel"></i> Filtros</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="get" action="/facturas" class="row g-2">
+                        <div class="col-5">
+                            <label class="form-label small">Desde</label>
+                            <input type="date" class="form-control form-control-sm" name="desde"
+                                   th:value="${filtroFechaDesde}">
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label small">Hasta</label>
+                            <input type="date" class="form-control form-control-sm" name="hasta"
+                                   th:value="${filtroFechaHasta}">
+                        </div>
+                        <div class="col-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" action="/facturas" class="row g-2">
+                        <div class="col-5">
+                            <label class="form-label small">Monto mín.</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" name="montoMin"
+                                   th:value="${filtroMontoMin}" placeholder="0.00">
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label small">Monto máx.</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" name="montoMax"
+                                   th:value="${filtroMontoMax}" placeholder="999.99">
+                        </div>
+                        <div class="col-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="mt-2">
+                <a href="/facturas" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle"></i> Limpiar filtros</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0" th:if="${not #lists.isEmpty(facturas)}">
+                <thead class="table-dark">
+                    <tr>
+                        <th># Factura</th>
+                        <th>Concepto</th>
+                        <th>Base</th>
+                        <th>Impuesto</th>
+                        <th>Tasa</th>
+                        <th>Total</th>
+                        <th>Emisión</th>
+                        <th>Vencimiento</th>
+                        <th>Estado</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="factura : ${facturas}">
+                        <td th:text="${factura.id}"></td>
+                        <td>
+                            <span th:text="${factura.concepto}"></span>
+                            <span th:if="${factura.esProrrateo}" class="badge badge-prorrateo text-white ms-1">Prorrateo</span>
+                        </td>
+                        <td><span th:text="${#numbers.formatDecimal(factura.monto, 1, 2)}"></span>€</td>
+                        <td><span th:text="${#numbers.formatDecimal(factura.impuesto, 1, 2)}"></span>€</td>
+                        <td><span th:text="${#numbers.formatDecimal(factura.tasaImpuesto, 1, 2)}"></span>%</td>
+                        <td><strong><span th:text="${#numbers.formatDecimal(factura.montoTotal, 1, 2)}"></span>€</strong></td>
+                        <td th:text="${factura.fechaEmision}"></td>
+                        <td th:text="${factura.fechaVencimiento}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${factura.estado.name() == 'PAGADA' ? 'bg-success' : (factura.estado.name() == 'PENDIENTE' ? 'bg-warning text-dark' : (factura.estado.name() == 'ANULADA' ? 'bg-secondary' : 'bg-danger'))}"
+                                  th:text="${factura.estado.descripcion}"></span>
+                        </td>
+                        <td>
+                            <a th:if="${factura.id == ultimaFacturaPendienteId}" th:href="@{/factura/{id}/pagar(id=${factura.id})}"
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-credit-card"></i> Pagar
+                            </a>
+                            <span th:if="${factura.estado.name() == 'PAGADA'}" class="text-success small"><i class="bi bi-check-circle"></i></span>
+                            <span th:if="${factura.estado.name() == 'ANULADA'}" class="text-muted small"><i class="bi bi-dash-circle"></i> Anulada</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(facturas)}" class="text-center p-5">
+                <i class="bi bi-inbox display-4 text-muted"></i>
+                <p class="text-muted mt-2">No hay facturas para mostrar.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

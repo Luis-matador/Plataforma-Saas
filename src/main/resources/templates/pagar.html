@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pagar Factura')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alertas}"></div>
+
+<div class="main-content">
+<div class="container">
+    <a href="/facturas" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Volver a Facturas</a>
+    <h2 class="mb-4"><i class="bi bi-credit-card-2-front"></i> Pagar Factura</h2>
+
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> Resumen</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Factura #:</strong> <span th:text="${factura.id}"></span></p>
+                    <p><strong>Concepto:</strong> <span th:text="${factura.concepto}"></span></p>
+                    <hr>
+                    <p><strong>Base:</strong> <span th:text="${#numbers.formatDecimal(factura.monto, 1, 2)}"></span>€</p>
+                    <p><strong>Impuesto (<span th:text="${#numbers.formatDecimal(factura.tasaImpuesto, 1, 2)}"></span>%):</strong>
+                       <span th:text="${#numbers.formatDecimal(factura.impuesto, 1, 2)}"></span>€</p>
+                    <hr>
+                    <h4 class="text-end" style="color: var(--color-primary)">
+                        Total: <span th:text="${#numbers.formatDecimal(factura.montoTotal, 1, 2)}"></span>€
+                    </h4>
+                    <p class="text-muted small mb-0">
+                        Vencimiento: <span th:text="${factura.fechaVencimiento}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-wallet2"></i> Selecciona un metodo de pago</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${not #lists.isEmpty(metodosPago)}">
+                        <form method="post" th:action="@{/factura/{id}/pagar(id=${factura.id})}">
+                            <div class="list-group mb-3">
+                                <label th:each="metodo, iterStat : ${metodosPago}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <input type="radio" name="metodoPagoId" th:value="${metodo.id}" class="form-check-input me-3"
+                                           th:checked="${iterStat.first}" required>
+                                    <div>
+                                        <i th:if="${metodo.tipoPago.name() == 'TARJETA'}" class="bi bi-credit-card-2-front text-primary me-2"></i>
+                                        <i th:if="${metodo.tipoPago.name() == 'PAYPAL'}" class="bi bi-paypal text-info me-2"></i>
+                                        <i th:if="${metodo.tipoPago.name() == 'TRANSFERENCIA'}" class="bi bi-bank text-secondary me-2"></i>
+                                        <strong th:text="${metodo.tipoPago.descripcion}"></strong>
+                                        <span th:if="${metodo.tipoPago.name() == 'TARJETA'}" class="text-muted ms-2">
+                                            **** <span th:text="${metodo.numeroTarjeta}"></span>
+                                        </span>
+                                        <span th:if="${metodo.tipoPago.name() == 'PAYPAL'}" class="text-muted ms-2"
+                                              th:text="${metodo.emailPaypal}"></span>
+                                        <span th:if="${metodo.tipoPago.name() == 'TRANSFERENCIA'}" class="text-muted ms-2"
+                                              th:text="${metodo.banco}"></span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100"
+                                    onsubmit="return confirm('Confirmar pago?')">
+                                <i class="bi bi-check-circle"></i> Confirmar Pago de <span th:text="${#numbers.formatDecimal(factura.montoTotal, 1, 2)}"></span>€
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(metodosPago)}" class="text-center py-4">
+                        <i class="bi bi-credit-card display-4 text-muted"></i>
+                        <p class="text-muted mt-3">No tienes metodos de pago registrados.</p>
+                        <a href="/metodos-pago" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Agregar Metodo de Pago
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

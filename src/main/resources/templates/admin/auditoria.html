@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Auditoría')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alertas}"></div>
+
+<div class="main-content">
+<div class="container">
+    <h2 class="mb-4"><i class="bi bi-clock-history text-warning"></i> Auditoría de Suscripciones</h2>
+    <a href="/admin/panel" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Volver al Panel</a>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        Este panel muestra el historial de todos los cambios realizados en las suscripciones (creación, cambio de plan, cancelación),
+        registrados automáticamente por <strong>Hibernate Envers</strong>.
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0" th:if="${not #lists.isEmpty(registros)}">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Rev. #</th>
+                        <th>Suscripción ID</th>
+                        <th>Tipo Cambio</th>
+                        <th>Usuario</th>
+                        <th>Plan</th>
+                        <th>Estado</th>
+                        <th>Fecha del Cambio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reg : ${registros}">
+                        <td><span class="badge bg-secondary" th:text="${reg.numeroRevision}"></span></td>
+                        <td th:text="${reg.entidadId}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${reg.tipoCambio == 'CREACIÓN' ? 'bg-success' : (reg.tipoCambio == 'MODIFICACIÓN' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                  th:text="${reg.tipoCambio}"></span>
+                        </td>
+                        <td th:text="${reg.usuario ?: 'N/A'}"></td>
+                        <td th:text="${reg.planActual ?: 'N/A'}"></td>
+                        <td th:text="${reg.estadoActual ?: 'N/A'}"></td>
+                        <td th:text="${reg.fechaCambio != null ? #temporals.format(reg.fechaCambio, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(registros)}" class="text-center p-5">
+                <i class="bi bi-inbox display-4 text-muted"></i>
+                <p class="text-muted mt-2">No hay registros de auditoría aún.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

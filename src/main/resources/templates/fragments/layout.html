@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">SaaS Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #0d9488;
+            --color-primary-dark: #0f766e;
+            --color-primary-light: #14b8a6;
+            --color-secondary: #1e293b;
+            --color-accent: #f59e0b;
+            --color-bg: #f1f5f9;
+        }
+        html, body { height: 100%; }
+        body {
+            background-color: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-content { flex: 1; }
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, #334155 100%) !important;
+        }
+        .navbar-custom .nav-link:hover { color: var(--color-primary-light) !important; }
+        .btn-primary, .bg-primary {
+            background-color: var(--color-primary) !important;
+            border-color: var(--color-primary) !important;
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark) !important;
+            border-color: var(--color-primary-dark) !important;
+        }
+        .btn-outline-primary {
+            color: var(--color-primary) !important;
+            border-color: var(--color-primary) !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--color-primary) !important;
+            color: white !important;
+        }
+        .text-primary { color: var(--color-primary) !important; }
+        .border-primary { border-color: var(--color-primary) !important; }
+        .card-plan { transition: transform 0.2s; border-radius: 12px; }
+        .card-plan:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(13,148,136,0.15); }
+        .badge-prorrateo { background-color: var(--color-accent); }
+        .hero {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .card { border-radius: 12px; border: 1px solid #e2e8f0; }
+        .card-header { border-radius: 12px 12px 0 0 !important; }
+        .footer-custom {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, #334155 100%);
+            color: #94a3b8;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+        .table-header-custom { background-color: var(--color-secondary) !important; color: white; }
+        .alert-success { background-color: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+        .badge.bg-primary { background-color: var(--color-primary) !important; }
+        a { color: var(--color-primary); }
+        a:hover { color: var(--color-primary-dark); }
+        .nav-admin-link { color: var(--color-accent) !important; font-weight: 600; }
+    </style>
+</head>
+
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-cloud-fill"></i> SaaS Platform</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" th:if="${session.usuarioId != null and (session.esAdmin == null or !session.esAdmin)}">
+                    <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li class="nav-item" th:if="${session.usuarioId != null and (session.esAdmin == null or !session.esAdmin)}">
+                    <a class="nav-link" href="/planes"><i class="bi bi-box"></i> Planes</a>
+                </li>
+                <li class="nav-item" th:if="${session.usuarioId != null and (session.esAdmin == null or !session.esAdmin)}">
+                    <a class="nav-link" href="/facturas"><i class="bi bi-receipt"></i> Facturas</a>
+                </li>
+                <li class="nav-item" th:if="${session.usuarioId != null and (session.esAdmin == null or !session.esAdmin)}">
+                    <a class="nav-link" href="/metodos-pago"><i class="bi bi-credit-card"></i> Pagos</a>
+                </li>
+                <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                    <a class="nav-link nav-admin-link" href="/admin/panel"><i class="bi bi-shield-lock"></i> Panel</a>
+                </li>
+                <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                    <a class="nav-link nav-admin-link" href="/admin/facturas"><i class="bi bi-receipt-cutoff"></i> Facturas</a>
+                </li>
+                <li class="nav-item" th:if="${session.esAdmin != null and session.esAdmin}">
+                    <a class="nav-link nav-admin-link" href="/admin/auditoria"><i class="bi bi-clock-history"></i> Auditoria</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item" th:if="${session.usuarioId == null}">
+                    <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesion</a>
+                </li>
+                <li class="nav-item" th:if="${session.usuarioId == null}">
+                    <a class="nav-link" href="/registro"><i class="bi bi-person-plus"></i> Registro</a>
+                </li>
+                <li class="nav-item" th:if="${session.usuarioId != null}">
+                    <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Cerrar Sesion</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="footer-custom text-center">
+    <div class="container">
+        <p class="mb-0">&copy; 2026 SaaS Platform - Plataforma de Gestion de Suscripciones</p>
+    </div>
+</footer>
+
+<div th:fragment="alertas" class="container">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

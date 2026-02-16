@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alertas}"></div>
+
+<div class="main-content">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="bi bi-person-plus"></i> Crear Cuenta</h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                    <form method="post" action="/registro" th:object="${registroRequest}">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre completo</label>
+                            <input type="text" class="form-control" th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                                   id="nombre" th:field="*{nombre}">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                   id="email" th:field="*{email}">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                                   id="password" th:field="*{password}">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pais" class="form-label">País</label>
+                            <select class="form-select" th:classappend="${#fields.hasErrors('pais')} ? 'is-invalid'"
+                                    id="pais" th:field="*{pais}">
+                                <option value="">Selecciona tu país</option>
+                                <option value="España">España (IVA 21%)</option>
+                                <option value="México">México (IVA 16%)</option>
+                                <option value="Argentina">Argentina (IVA 21%)</option>
+                                <option value="Colombia">Colombia (IVA 19%)</option>
+                                <option value="Chile">Chile (IVA 19%)</option>
+                                <option value="Perú">Perú (IGV 18%)</option>
+                                <option value="Estados Unidos">Estados Unidos (0%)</option>
+                                <option value="Reino Unido">Reino Unido (VAT 20%)</option>
+                                <option value="Alemania">Alemania (MwSt 19%)</option>
+                                <option value="Francia">Francia (TVA 20%)</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('pais')}" th:errors="*{pais}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-check"></i> Registrarse
+                        </button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0">¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

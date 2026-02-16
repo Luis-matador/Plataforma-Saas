@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Planes')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div th:replace="~{fragments/layout :: alertas}"></div>
+
+<div class="main-content">
+<div class="container">
+    <h2 class="mb-4 text-center"><i class="bi bi-box"></i> Nuestros Planes</h2>
+    <p class="text-center text-muted mb-5">Elige el plan que mejor se adapte a tus necesidades</p>
+
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4" th:each="plan : ${planes}">
+            <div class="card card-plan h-100 shadow"
+                 th:classappend="${plan.nivel.name() == 'PREMIUM' ? 'border-primary' : ''}">
+                <div class="card-header text-center"
+                     th:classappend="${plan.nivel.name() == 'PREMIUM' ? 'bg-primary text-white' : 'bg-light'}">
+                    <span th:if="${plan.nivel.name() == 'PREMIUM'}" class="badge bg-warning text-dark mb-1">Popular</span>
+                    <h4 th:text="${plan.nombre}" class="mb-0"></h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <span class="display-4 fw-bold"><span th:text="${#numbers.formatDecimal(plan.precioMensual, 1, 2)}"></span>€</span>
+                        <span class="text-muted">/mes</span>
+                    </div>
+                    <p class="text-muted" th:text="${plan.descripcion}"></p>
+                    <hr>
+                    <ul class="list-unstyled text-start">
+                        <li th:each="pc : ${plan.planCaracteristicas}" class="mb-2">
+                            <i th:if="${pc.activa}" class="bi bi-check-circle-fill text-success"></i>
+                            <i th:if="${!pc.activa}" class="bi bi-x-circle-fill text-muted"></i>
+                            <span th:text="${pc.caracteristica.nombre + ': ' + pc.valor}"
+                                  th:classappend="${!pc.activa} ? 'text-muted'"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+                    <form th:if="${suscripcionActiva == null}" method="post"
+                          th:action="@{/suscripcion/crear/{id}(id=${plan.id})}">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-lg"></i> Elegir Plan
+                        </button>
+                    </form>
+                    <div th:if="${suscripcionActiva != null}">
+                        <span th:if="${suscripcionActiva.plan.id == plan.id}" class="badge bg-success fs-6">
+                            <i class="bi bi-check-circle"></i> Plan Actual
+                        </span>
+                        <form th:if="${suscripcionActiva.plan.id != plan.id and plan.precioMensual > suscripcionActiva.plan.precioMensual}"
+                              method="post" th:action="@{/suscripcion/cambiar/{id}(id=${plan.id})}"
+                              onsubmit="return confirm('Se generara una factura. Continuar?')">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-arrow-up-circle"></i> Upgrade
+                            </button>
+                        </form>
+                        <form th:if="${suscripcionActiva.plan.id != plan.id and plan.precioMensual < suscripcionActiva.plan.precioMensual}"
+                              method="post" th:action="@{/suscripcion/cambiar/{id}(id=${plan.id})}"
+                              onsubmit="return confirm('Cambiar a este plan?')">
+                            <button type="submit" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-arrow-down-circle"></i> Downgrade
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
