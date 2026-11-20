@@ -1,5 +1,7 @@
 # Plataforma SaaS - Sistema de Gestión de Suscripciones
 
+[![CI](https://github.com/Luis-matador/Plataforma-Saas/actions/workflows/ci.yml/badge.svg)](https://github.com/Luis-matador/Plataforma-Saas/actions/workflows/ci.yml)
+
 ## Descripción
 
 Core de una plataforma SaaS desarrollada con **Spring Boot 4**, **JPA/Hibernate**, **Thymeleaf** y **MySQL**. El sistema permite:
